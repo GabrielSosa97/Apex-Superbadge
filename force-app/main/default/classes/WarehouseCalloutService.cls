@@ -14,34 +14,32 @@ public with sharing class WarehouseCalloutService implements Queueable {
         
         if (response.getStatusCode() == 200) {
             List<Object> results = (List<Object>) JSON.deserializeUntyped(response.getBody());
-            List<Product2> equipmentList = new List<Product2>();
+            List<Product2> eList = new List<Product2>();
             
-            for (Object record: results) {
-                Map<String, Object> recordMap = (Map<String, Object>)record;
-                Product2 equipment = new Product2();
+            for (Object r: results) {
+                Map<String, Object> rMap = (Map<String, Object>)r;
+                Product2 e = new Product2();
                 
-                equipment.Name = (String)recordMap.get('name');
-                equipment.Cost__c = (Decimal)recordMap.get('cost');
-                equipment.ProductCode = (String)recordMap.get('_id');
-                equipment.Current_Inventory__c = (Integer)recordMap.get('quantity');
-                equipment.Maintenance_Cycle__c = (Integer)recordMap.get('maintenanceperiod');
-                equipment.Replacement_Part__c = (Boolean)recordMap.get('replacement');
-                equipment.Lifespan_Months__c = (Integer)recordMap.get('lifespan');
-                equipment.Warehouse_SKU__c = (String)recordMap.get('sku');
+                e.Name = (String)rMap.get('name');
+                e.Cost__c = (Decimal)rMap.get('cost');
+                e.ProductCode = (String)rMap.get('_id');
+                e.Current_Inventory__c = (Integer)rMap.get('quantity');
+                e.Maintenance_Cycle__c = (Integer)rMap.get('maintenanceperiod');
+                e.Replacement_Part__c = (Boolean)rMap.get('replacement');
+                e.Lifespan_Months__c = (Integer)rMap.get('lifespan');
+                e.Warehouse_SKU__c = (String)rMap.get('sku');
                 
-                equipmentList.add(equipment);
+                eList.add(e);
             }
             
-            if(equipmentList.size() > 0){
-                upsert equipmentList;
+            if(eList.size() > 0){
+                upsert eList;
             }
-            system.debug(equipmentList);
+            system.debug(eList);
         }
         
     }
     public static void execute (QueueableContext context){
-        System.debug('start runWarehouseEquipmentSync');
         runWarehouseEquipmentSync();
-        System.debug('end runWarehouseEquipmentSync');
     }
 }
